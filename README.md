@@ -56,6 +56,17 @@ Antes de iniciar, asegúrate de tener instalado:
    - Espera un par de minutos.
    - Vuelve a ejecutar los comandos anteriores y verifica que los registros más antiguos se eliminan conforme se agregan nuevos.
 
+## Acceso Remoto a la Base de Datos
+Para conectarte a la base de datos MySQL desde un cliente remoto, asegúrate de que:
+- El host donde está ejecutándose MySQL tiene el **puerto 3306 abierto**.
+- MySQL está configurado para aceptar conexiones remotas modificando `bind-address = 0.0.0.0` en su configuración.
+- Se ha creado un usuario con acceso desde cualquier IP (`'user'@'%'`).
+
+Para probar la conexión desde un cliente MySQL externo:
+```sh
+mysql -h <IP_DEL_SERVIDOR> -u user -p
+```
+
 ## Detener los Contenedores
 Para detener la ejecución:
 ```sh
