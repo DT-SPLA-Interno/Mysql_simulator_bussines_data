@@ -15,7 +15,7 @@ Antes de iniciar, asegúrate de tener instalado:
 
 2. **Construir y levantar los servicios con Docker Compose**
    ```sh
-   docker-compose up -d --build
+   sudo docker-compose up -d --build
    ```
    Esto iniciará:
    - Un contenedor MySQL con la base de datos preconfigurada.
@@ -23,7 +23,7 @@ Antes de iniciar, asegúrate de tener instalado:
 
 3. **Verificar que los contenedores están corriendo**
    ```sh
-   docker ps
+   sudo docker ps
    ```
    Deberías ver al menos dos contenedores: `mysql_db` y `python_service`.
 
@@ -31,7 +31,7 @@ Antes de iniciar, asegúrate de tener instalado:
 
 4. **Acceder a MySQL dentro del contenedor**
    ```sh
-   docker exec -it mysql_db mysql -u user -p
+   sudo docker exec -it mysql_db mysql -u user -p
    ```
    (Introduce la contraseña: `password`)
 
@@ -70,14 +70,14 @@ mysql -h <IP_DEL_SERVIDOR> -u user -p
 ## Detener los Contenedores
 Para detener la ejecución:
 ```sh
-docker-compose down
+sudo docker-compose down
 ```
 
 ## Notas
 - Si deseas modificar el intervalo de inserción/eliminación, edita `main.py` dentro del servicio Python y cambia `time.sleep(60)` a otro valor en segundos.
 - Para volver a iniciar el servicio después de modificaciones:
   ```sh
-  docker-compose up -d --build
+  sudo docker-compose up -d --build
   ```
 
 ¡Listo! Ahora tu simulación de operaciones bancarias y retail está corriendo correctamente. 🚀
