@@ -13,19 +13,20 @@ def get_connection():
                 password="password",
                 database="banco_simulacion"
             )
-            print("Conectado a MySQL correctamente.")
+            print("✅ Conectado a MySQL correctamente.")
             return conn
         except mysql.connector.Error as err:
-            print(f"Intento {i+1}/{retries}: No se pudo conectar a MySQL ({err})")
+            print(f"❌ Intento {i+1}/{retries}: No se pudo conectar a MySQL ({err})")
             time.sleep(5)  # Espera 5 segundos antes de intentar nuevamente
 
     raise Exception("No se pudo conectar a MySQL después de varios intentos")
 
-def insert_data():
+def insert_data(n=10):
+    """ Inserta `n` registros en cada tabla """
     conn = get_connection()
     cursor = conn.cursor()
 
-    for _ in range(10):
+    for _ in range(n):
         cursor.execute("""
             INSERT INTO operaciones_bancarias (tipo_operacion, monto, moneda, cuenta_origen, cuenta_destino, estado)
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -52,8 +53,10 @@ def insert_data():
     
     conn.commit()
     conn.close()
+    print(f"✅ Insertados {n} registros en cada tabla.")
 
 def delete_old_data():
+    """ Elimina los 10 registros más antiguos en cada tabla """
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -61,11 +64,37 @@ def delete_old_data():
     cursor.execute("DELETE FROM operaciones_retail ORDER BY fecha ASC LIMIT 10")
     conn.commit()
     conn.close()
+    print("🗑️ Eliminados 10 registros en cada tabla.")
 
+def get_row_count():
+    """ Obtiene la cantidad de registros en las tablas """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM operaciones_bancarias")
+    count_bancarias = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM operaciones_retail")
+    count_retail = cursor.fetchone()[0]
+
+    conn.close()
+    return count_bancarias, count_retail
+
+# 1️⃣ Verificar si es la primera ejecución
+bancarias_count, retail_count = get_row_count()
+print(f"📊 Registros actuales - Bancarias: {bancarias_count}, Retail: {retail_count}")
+
+if bancarias_count == 0 or retail_count == 0:
+    print("⚡ Primera ejecución detectada. Insertando 20 registros iniciales...")
+    insert_data(20)  # Inserta 20 registros iniciales
+
+# 2️⃣ Ciclo de inserción y eliminación cada 60 segundos
 while True:
-    print("Insertando datos en la base de datos...")
-    insert_data()
-    print("Eliminando datos antiguos...")
+    print("🔄 Insertando nuevos datos...")
+    insert_data(10)  # Inserta 10 cada iteración
+
+    print("🔄 Eliminando datos antiguos...")
     delete_old_data()
-    print("Esperando 60 segundos antes del próximo ciclo...")
+
+    print("⏳ Esperando 60 segundos antes del próximo ciclo...")
     time.sleep(60)
