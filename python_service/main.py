@@ -1,16 +1,25 @@
-# Python Service (python_service/main.py)
+import time
 import mysql.connector
 import random
-import time
 from datetime import datetime
 
 def get_connection():
-    return mysql.connector.connect(
-        host="mysql",
-        user="user",
-        password="password",
-        database="banco_simulacion"
-    )
+    retries = 10  # Número máximo de intentos
+    for i in range(retries):
+        try:
+            conn = mysql.connector.connect(
+                host="mysql",
+                user="user",
+                password="password",
+                database="banco_simulacion"
+            )
+            print("Conectado a MySQL correctamente.")
+            return conn
+        except mysql.connector.Error as err:
+            print(f"Intento {i+1}/{retries}: No se pudo conectar a MySQL ({err})")
+            time.sleep(5)  # Espera 5 segundos antes de intentar nuevamente
+
+    raise Exception("No se pudo conectar a MySQL después de varios intentos")
 
 def insert_data():
     conn = get_connection()
@@ -54,6 +63,9 @@ def delete_old_data():
     conn.close()
 
 while True:
+    print("Insertando datos en la base de datos...")
     insert_data()
+    print("Eliminando datos antiguos...")
     delete_old_data()
+    print("Esperando 60 segundos antes del próximo ciclo...")
     time.sleep(60)
