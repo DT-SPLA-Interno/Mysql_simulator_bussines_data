@@ -19,7 +19,7 @@ Antes de iniciar, asegúrate de tener instalado:
    ```
    Esto iniciará:
    - Un contenedor MySQL con la base de datos preconfigurada.
-   - Un servicio en Python que genera datos cada minuto.
+   - Un servicio en Python que genera datos cada minuto. (puede fallar al primer intento porque el mysql no esta iniciado, pero con validar que el mysql esta corriendo y volver a correr el build todo funcionara)
 
 3. **Verificar que los contenedores están corriendo**
    ```sh
